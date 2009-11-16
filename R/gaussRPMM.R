@@ -3,7 +3,7 @@
 #    
 #  AUTHOR:  E. Andres Houseman, Sc.D.
 #  CREATED:        July, 2008
-#  LAST MODIFIED:  December, 2008
+#  LAST MODIFIED:  November, 2009
 #
 ########################################################################################
 
@@ -18,8 +18,8 @@
 # ARGUMENTS:
 #    x:              Data matrix (n x j) on which to perform clustering
 #                    Missing values are currently not supported
-#    initFunctions:  Function of type "blcInitialize..." for initializing
-#                    latent class model.  See blcInitializeFanny() for an
+#    initFunctions:  Function of type "glcInitialize..." for initializing
+#                    latent class model.  See glcInitializeFanny() for an
 #                    example of arguments and return values
 #    weight:         Weight corresponding to the indices passed (see "index").
 #                    Defaults to 1 for all indices
@@ -35,7 +35,7 @@
 #                    will never split.  Defaults to 5.
 #    ICL:            Boolean:  use ICL-BIC (i.e. consider entropy in BIC)?
 #                              See Ji et al. (2005) for definition of ICL-BIC
-#    env:            Object of class "blcTree" to store tree data.
+#    env:            Object of class "glcTree" to store tree data.
 #                    Defaults to a new object.  USER SHOULD NOT SET THIS.
 #    nodename:       Name of object that will reprsent node in tree data object.
 #                    Defaults to "root".  USER SHOULD NOT SET THIS.
@@ -44,10 +44,10 @@
 #                    Defaults to NULL for root.  This is used in plotting functions.
 #                    USER SHOULD NOT SET THIS.
 #
-# RETURNS:   Object of class "blcTree"
+# RETURNS:   Object of class "glcTree"
 #
 # NOTES:
-#   The class "blcTree" is currently implemented as an environment object with
+#   The class "glcTree" is currently implemented as an environment object with
 #   nodes represented flatly, with name indicating positition in hierarchy
 #   (e.g. "rLLR" = "right child of left child of left child of root")
 #   This implementation is to make certain plotting and update functions simpler
@@ -103,8 +103,8 @@ glcTree <- function(x, initFunctions=list(glcInitializeSplitFanny(nu=1.5)),
 }
 
 ########################################################################################
-# FUNCTION:  print.blcTree
-#    Print method for objects of type blcTree
+# FUNCTION:  print.glcTree
+#    Print method for objects of type glcTree
 #
 # ARGUMENTS:
 #    tr:  Object to print
@@ -120,8 +120,8 @@ print.glcTree <- function(x,...){
 }
 
 ########################################################################################
-# FUNCTION:  plot.blcTree
-#    Plot method for objects of type blcTree
+# FUNCTION:  plot.glcTree
+#    Plot method for objects of type glcTree
 #       Plots profiles of terminal nodes in color.
 #
 # ARGUMENTS:
@@ -218,13 +218,13 @@ plotImage.glcTree <- function(env, start="r", method="weight",
 }
 
 ########################################################################################
-# FUNCTION:  plotTree.blcTree
-#    Alternate plot method for objects of type blcTree:  plots tree.
+# FUNCTION:  plotTree.glcTree
+#    Alternate plot method for objects of type glcTree:  plots tree.
 #
 # ARGUMENTS:
 #    env:       Object to print
 #    start:     Node to start.  Default="r" for "root".
-#               Use is deprecated, subsumed by passing the result of "blcSubTree"
+#               Use is deprecated, subsumed by passing the result of "glcSubTree"
 #    labelFunction:  Function for generating node labels.  See example.
 #    labelAllNodes:  TRUE=All nodes will be labeled; FALSE=Terminal nodes only.
 #    labelDigits:    ****TO DO****
@@ -291,14 +291,14 @@ plotTree.glcTree <- function(env,start="r",labelFunction=NULL,
 }
 
 ########################################################################################
-# FUNCTION:  blcSubTree
-#    Subsets a "blcTree" object, i.e. considers the tree whose root is a given node.
+# FUNCTION:  glcSubTree
+#    Subsets a "glcTree" object, i.e. considers the tree whose root is a given node.
 #
 # ARGUMENTS:
-#    tr:  "blcTree" object to subset
+#    tr:  "glcTree" object to subset
 #    node:  Name of node to make root.
 #
-# RETURNS:   A "blcTree" object whose root is the given node of "tr"
+# RETURNS:   A "glcTree" object whose root is the given node of "tr"
 #
 # NOTES:
 #    This function creates a copy of the data
@@ -318,16 +318,16 @@ glcSubTree <- function(tr, node){
 }
 
 ########################################################################################
-# FUNCTION:  blcTreeApply
-#    Applies a function to every [terminal] node in a blcTree object
+# FUNCTION:  glcTreeApply
+#    Applies a function to every [terminal] node in a glcTree object
 #
 # ARGUMENTS:
-#    tr:           "blcTree" object to recurse.
+#    tr:           "glcTree" object to recurse.
 #    f:            Function to apply at every node.
 #    start:        Starting node.  Default="root".
 #    terminalOnly: TRUE=only terminal nodes, FALSE=all nodes.
 #    asObject:     TRUE="f" accepts node as object
-#                  FALSE="f" accepts node by node name and blcTree object, f(nn,tr)
+#                  FALSE="f" accepts node by node name and glcTree object, f(nn,tr)
 #                     The latter is useful for certain operations requiring knowledge
 #                     of tree depth.
 #    ...           Additional arguments to pass to "f"
@@ -369,11 +369,11 @@ glcTreeApply <- function(tr,f,start="root",terminalOnly=FALSE,asObject=TRUE,...)
 }
 
 ########################################################################################
-# FUNCTION:  blcTreeLeafMatrix
+# FUNCTION:  glcTreeLeafMatrix
 #    Gets matrix of class membership weights for terminal nodes
 #
 # ARGUMENTS:
-#    hmObject:     "blcTree" object to recurse.
+#    hmObject:     "glcTree" object to recurse.
 #    rounding:     # Digits to round.  Note that if this value is too large,
 #           then some subjects will have fractional weight and the function will fail.
 
@@ -397,18 +397,18 @@ glcTreeLeafMatrix <- function(tr, rounding=3){
 
 
 ########################################################################################
-# FUNCTION:  blcTreeLeafClasses
+# FUNCTION:  glcTreeLeafClasses
 #    Gets class assignments corresponding to tree
 #    (Works only if terminal class membership weights are close to zero or one)
 #
 # ARGUMENTS:
-#    hmObject:     "blcTree" object to recurse.
+#    hmObject:     "glcTree" object to recurse.
 #    rounding:     # Digits to round.  Note that if this value is too large,
 #           then some subjects will have fractional weight and the function will fail.
 
 # RETURNS:   A factor corresponding to class assignments.
 #
-# ADDITIONAL NOTES:  Use "blcTreeLeafMatrix" if subjects have fractional class membership
+# ADDITIONAL NOTES:  Use "glcTreeLeafMatrix" if subjects have fractional class membership
 #
 ########################################################################################
 
@@ -419,7 +419,7 @@ glcTreeLeafClasses <- function(tr){
 }
 
 ########################################################################################
-# FUNCTION:  blcInitializeSplitFanny
+# FUNCTION:  glcInitializeSplitFanny
 #    Creates a function for initializing latent class model 
 #     using "fanny"
 #
@@ -458,7 +458,7 @@ glcInitializeSplitFanny <- function(nu=2, nufac=0.875, metric="euclidean"){
 }
 
 ########################################################################################
-# FUNCTION:  blcInitializeSplitHClust
+# FUNCTION:  glcInitializeSplitHClust
 #    Creates a function for initializing latent class model 
 #     using hierarchical clustering
 #
@@ -579,14 +579,14 @@ glcSplitCriterionJustRecordEverything = function(llike1, llike2, weight, ww, J, 
 }
 
 ########################################################################################
-# FUNCTION:  blcSplit
+# FUNCTION:  glcSplit
 #    Splits a data set into two beta mixture models
 #
 # ARGUMENTS:
 #    x:              Data matrix (n x j) on which to perform clustering
 #                    Missing values are currently not supported
-#    initFunctions:  Function of type "blcInitialize..." for initializing
-#                    latent class model.  See blcInitializeFanny() for an
+#    initFunctions:  Function of type "glcInitialize..." for initializing
+#                    latent class model.  See glcInitializeFanny() for an
 #                    example of arguments and return values
 #    weight:         Weight corresponding to the indices passed (see "index").
 #                    Defaults to 1 for all indices
@@ -607,73 +607,77 @@ glcSplitCriterionJustRecordEverything = function(llike1, llike2, weight, ww, J, 
 #
 ########################################################################################
 
-glcSplit <- function(x, initFunctions, weight=NULL, index=NULL, level=0, wthresh=1E-9,
-  verbose=TRUE, nthresh=5, splitCriterion=glcSplitCriterionBIC){
-  n <- dim(x)[1]
-  if(is.null(weight)) weight <- rep(1,n)
-  if(is.null(index)) index <- 1:n
-
-  flag <- weight>wthresh
-  xdat <- x[flag,,drop=FALSE]
-  index <- index[flag]
-  weight <- weight[flag]
-  n <- dim(xdat)[1]
-
-  sumweight <- sum(weight)
-
-  if(!is.null(splitCriterion)){
-
-    J <- dim(xdat)[2]
-    llike1 <- 0
-    for(j in 1:J){
-      wY <- weight*xdat[,j]
-      mu <- sum(wY)/sumweight
-      sigma <- pmax(1E-8,sqrt(sum(wY*xdat[,j])/sumweight - mu*mu) )   
-      llike1 <- try( llike1 + sum(weight*dnorm(xdat[,j], mu, sigma, log=TRUE), na.rm=TRUE))
-if(inherits(llike1,"try-error")) browser()
+glcSplit <- 
+function (x, initFunctions, weight = NULL, index = NULL, level = 0, 
+    wthresh = 1e-09, verbose = TRUE, nthresh = 5, splitCriterion = glcSplitCriterionBIC) 
+{
+    n <- dim(x)[1]
+    if (is.null(weight)) 
+        weight <- rep(1, n)
+    if (is.null(index)) 
+        index <- 1:n
+    flag <- weight > wthresh
+    xdat <- x[flag, , drop = FALSE]
+    index <- index[flag]
+    weight <- weight[flag]
+    n <- dim(xdat)[1]
+    obs = !is.na(xdat)
+    sumweight <- apply(weight*obs,2,sum)
+    msumweight <- mean(sumweight)
+    if (!is.null(splitCriterion)) {
+        J <- dim(xdat)[2]
+        llike1 <- 0
+        for (j in 1:J) {
+            wY <- weight * xdat[, j]
+            mu <- sum(wY, na.rm=TRUE)/sumweight[j]
+            sigma <- pmax(1e-08, sqrt(sum(wY * xdat[, j], na.rm=TRUE)/sumweight[j] - 
+                mu * mu))
+            llike1 <- try(llike1 + sum(weight * dnorm(xdat[, 
+                j], mu, sigma, log = TRUE), na.rm = TRUE))
+            if (inherits(llike1, "try-error")) 
+                browser()
+        }
     }
-  }
-
-  out <- list(index=index,weight=weight,x=xdat)
-
-  lcoList <- list()
-  nfits <- 0
-  if(nthresh<sumweight) for(s in 1:length(initFunctions)){
-    lco <- try(glc(xdat,w=initFunctions[[s]](xdat),weight=weight,verbose=(verbose>1)))
-    if(!inherits(lco,"try-error")){
-       nfits <- nfits+1
-      lcoList[[nfits]] <- lco
+    out <- list(index = index, weight = weight, x = xdat)
+    lcoList <- list()
+    nfits <- 0
+    if (nthresh < msumweight) 
+        for (s in 1:length(initFunctions)) {
+            lco <- try(glc(xdat, w = initFunctions[[s]](xdat), 
+                weight = weight, verbose = (verbose > 1)))
+            if (!inherits(lco, "try-error")) {
+                nfits <- nfits + 1
+                lcoList[[nfits]] <- lco
+            }
+        }
+    if (nfits > 0) {
+        likes <- unlist(lapply(lcoList, function(u) u$llike))
+        if (verbose > 0) 
+            print(likes)
+        lco <- lcoList[[which.max(likes)]]
     }
-  }
-
-  if(nfits>0){
-    likes <- unlist(lapply(lcoList,function(u)u$llike))
-    if(verbose>0) print(likes)
-    lco <- lcoList[[which.max(likes)]]
-  }
-  else{
-    out$split <- FALSE
-    return(out)
-  }
-
-  out$lco <- lco
-  out$split <- TRUE
-  out$ww <- weight*lco$w
-
-  if(!is.null(splitCriterion)){
-
-    out$splitInfo <- splitCriterion(llike1, lco$llike, weight, out$ww, J, level)
-    out$split <- out$splitInfo$split
+    else {
+        out$split <- FALSE
+        return(out)
     }
-  out
+    out$lco <- lco
+    out$split <- TRUE
+    out$ww <- weight * lco$w
+    if (!is.null(splitCriterion)) {
+        out$splitInfo <- splitCriterion(llike1, lco$llike, weight, 
+            out$ww, J, level)
+        out$split <- out$splitInfo$split
+    }
+    out
 }
 
+
 ########################################################################################
-# FUNCTION:  blcTreeOverallBIC
+# FUNCTION:  glcTreeOverallBIC
 #    Computes the BIC for the latent class model represented by terminal nodes.
 #
 # ARGUMENTS:
-#    tr:           "blcTree" object for which to compute overall BIC.
+#    tr:           "glcTree" object for which to compute overall BIC.
 #
 # RETURNS:   A double numeric value representing BIC.
 #
@@ -730,7 +734,7 @@ glcTreeOverallBIC <- function(tr,ICL=FALSE){
 ########################################################################################
 
 ########################################################################################
-# FUNCTION:  blc
+# FUNCTION:  glc
 #    Fits a beta mixture model for any number of classes
 #
 # ARGUMENTS:
@@ -748,57 +752,62 @@ glcTreeOverallBIC <- function(tr,ICL=FALSE){
 #
 ########################################################################################
 
-glc <- function(Y, w, maxiter=100, tol=1E-6, weights=NULL, verbose=TRUE){
+glc <- function (Y, w, maxiter = 100, tol = 1e-06, weights = NULL, verbose = TRUE) 
+{
+    J <- dim(Y)[2]
+    K <- dim(w)[2]
+    n <- dim(w)[1]
+    obs <- !is.na(Y)
 
-  J <- dim(Y)[2]
-  K <- dim(w)[2]
-  n <- dim(w)[1]
-  if(n != dim(Y)[1]) stop("Dimensions of w and Y do not agree")
+    if (n != dim(Y)[1]) 
+        stop("Dimensions of w and Y do not agree")
+    if (is.null(weights)) 
+        weights <- rep(1, n)
+    mu <- sigma <- matrix(Inf, K, J)
+    crit <- Inf
+    currErrState <- options()$show.error.messages
+    options(show.error.messages = FALSE)
+    for (i in 1:maxiter) {
+        warn0 <- options()$warn
+        options(warn = -1)
+        eta <- apply(weights * w, 2, sum)/sum(weights)
+        mu0 <- mu
+        for (k in 1:K) {
+            wt <- w[, k] * weights
+            #nn <- sum(wt)
+            nn = apply(wt*obs,2,sum)
 
-  if(is.null(weights)) weights <- rep(1,n)
-
-  mu <- sigma <- matrix(Inf,K,J)
-  crit <- Inf
-  currErrState <- options()$show.error.messages
-  options(show.error.messages=FALSE)
-  for(i in 1:maxiter){
-     warn0 <- options()$warn
-     options(warn=-1)
-     eta <- apply(weights*w,2,sum)/sum(weights) #EAH 10/29/2008
-     mu0 <- mu
-     for(k in 1:K){
-       wt <- w[,k]*weights
-       nn <- sum(wt)
-       wY <- wt*Y
-       wY2 <- wY*Y
-       mu[k,] <- apply(wY,2,sum,na.rm=TRUE)/nn
-       sigma[k,] <- pmax(1E-8,sqrt(apply(wY2,2,sum,na.rm=TRUE)/nn - mu[k,]*mu[k,]) )   
-     }
-    ww <- array(NA,dim=c(n,J,K))
-    for(k in 1:K){
-      for(j in 1:J){
-         ww[,j,k] <- dnorm(Y[,j], mu[k,j], sigma[k,j], log=TRUE) 
-      }
+            wY <- wt * Y
+            wY2 <- wY * Y
+            mu[k, ] <- apply(wY, 2, sum, na.rm = TRUE)/nn
+            sigma[k, ] <- pmax(1e-08, sqrt(apply(wY2, 2, sum, 
+                na.rm = TRUE)/nn - mu[k, ] * mu[k, ]))
+        }
+        ww <- array(NA, dim = c(n, J, K))
+        for (k in 1:K) {
+            for (j in 1:J) {
+                ww[, j, k] <- dnorm(Y[, j], mu[k, j], sigma[k, 
+                  j], log = TRUE)
+            }
+        }
+        options(warn = warn0)
+        w <- apply(ww, c(1, 3), sum, na.rm = TRUE)
+        wmax <- apply(w, 1, max)
+        for (k in 1:K) w[, k] <- w[, k] - wmax
+        w <- t(eta * t(exp(w)))
+        like <- apply(w, 1, sum)
+        w <- (1/like) * w
+        llike <- weights * (log(like) + wmax)
+        crit <- max(abs(mu - mu0),na.rm=TRUE)
+        if (verbose) 
+            print(crit)
+        if (crit < tol) 
+            break
     }
-    options(warn=warn0)
-
-    w <- apply(ww, c(1,3), sum, na.rm=TRUE)
-    wmax <- apply(w,1,max)
-    for(k in 1:K) w[,k] <- w[,k] - wmax       
-    w <- t(eta * t(exp(w)))
-    like <- apply(w,1,sum)
-    w <- (1/like) * w
-    llike <- weights*(log(like) + wmax)  #EAH 10/29/2008
-
-    crit <- max(abs(mu-mu0))
-
-    if(verbose) print(crit)
-    if(crit<tol) break
-
-  }
-  options(show.error.messages=currErrState)
-  return(list(mu=mu, sigma=sigma, eta=eta, w=w, llike=sum(llike)))
+    options(show.error.messages = currErrState)
+    return(list(mu = mu, sigma = sigma, eta = eta, w = w, llike = sum(llike)))
 }
+
 
 ########################################################################################
 # FUNCTION:  betaEstMultiple

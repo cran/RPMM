@@ -3,7 +3,7 @@
 #    
 #  AUTHOR:  E. Andres Houseman, Sc.D.
 #  CREATED:        January, 2008
-#  LAST MODIFIED:  December, 2008
+#  LAST MODIFIED:  November, 2009
 #
 ########################################################################################
 
@@ -527,7 +527,7 @@ blcInitializeSplitEigen <- function(
   eigendim=1,
   assignmentf=function(s)(rank(s)-0.5)/length(s)){
   function(xdat){
-    s = apply(xdat,2,sd)
+    s = apply(xdat,2,sd,na.rm=TRUE)
     z = (1/(s+1E-8))*xdat
     R = var(z,use="pair")
     eig = eigen(R)

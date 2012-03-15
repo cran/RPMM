@@ -3,7 +3,7 @@
 #    
 #  AUTHOR:  E. Andres Houseman, Sc.D.
 #  CREATED:        July, 2008
-#  LAST MODIFIED:  November, 2009
+#  LAST MODIFIED:  March, 2012
 #
 ########################################################################################
 
@@ -441,7 +441,7 @@ glcInitializeSplitFanny <- function(nu=2, nufac=0.875, metric="euclidean"){
 
     warn0 <- options()$warn
     options(warn=-1)
-    fano <- try(fanny(xdat, 2, memb.exp=nu, metric=metric))
+    fano <- try(fanny(xdat, 2, memb.exp=nu, metric=metric),silent=TRUE)
 
     if(inherits(fano,"try-error")){
        wtmp <- runif(dim(xdat)[1])
@@ -633,7 +633,7 @@ function (x, initFunctions, weight = NULL, index = NULL, level = 0,
             sigma <- pmax(1e-08, sqrt(sum(wY * xdat[, j], na.rm=TRUE)/sumweight[j] - 
                 mu * mu))
             llike1 <- try(llike1 + sum(weight * dnorm(xdat[, 
-                j], mu, sigma, log = TRUE), na.rm = TRUE))
+                j], mu, sigma, log = TRUE), na.rm = TRUE),silent=TRUE)
             if (inherits(llike1, "try-error")) 
                 browser()
         }
@@ -644,7 +644,7 @@ function (x, initFunctions, weight = NULL, index = NULL, level = 0,
     if (nthresh < msumweight) 
         for (s in 1:length(initFunctions)) {
             lco <- try(glc(xdat, w = initFunctions[[s]](xdat), 
-                weight = weight, verbose = (verbose > 1)))
+                weights = weight, verbose = (verbose > 1)),silent=TRUE)
             if (!inherits(lco, "try-error")) {
                 nfits <- nfits + 1
                 lcoList[[nfits]] <- lco
@@ -765,8 +765,6 @@ glc <- function (Y, w, maxiter = 100, tol = 1e-06, weights = NULL, verbose = TRU
         weights <- rep(1, n)
     mu <- sigma <- matrix(Inf, K, J)
     crit <- Inf
-    currErrState <- options()$show.error.messages
-    options(show.error.messages = FALSE)
     for (i in 1:maxiter) {
         warn0 <- options()$warn
         options(warn = -1)
@@ -804,7 +802,6 @@ glc <- function (Y, w, maxiter = 100, tol = 1e-06, weights = NULL, verbose = TRU
         if (crit < tol) 
             break
     }
-    options(show.error.messages = currErrState)
     return(list(mu = mu, sigma = sigma, eta = eta, w = w, llike = sum(llike)))
 }
 

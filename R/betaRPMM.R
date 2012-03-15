@@ -3,7 +3,7 @@
 #    
 #  AUTHOR:  E. Andres Houseman, Sc.D.
 #  CREATED:        January, 2008
-#  LAST MODIFIED:  November, 2009
+#  LAST MODIFIED:  March, 2012 
 #
 ########################################################################################
 
@@ -436,7 +436,7 @@ blcInitializeSplitFanny <- function(nu=2, nufac=0.875, metric="euclidean"){
 
     warn0 <- options()$warn
     options(warn=-1)
-    fano <- try(fanny(xdat, 2, memb.exp=nu, metric=metric))
+    fano <- try(fanny(xdat, 2, memb.exp=nu, metric=metric),silent=TRUE)
 
     if(inherits(fano,"try-error")){
        wtmp <- runif(dim(xdat)[1])
@@ -661,7 +661,7 @@ blcSplit <- function(x, initFunctions, weight=NULL, index=NULL, level=NULL, wthr
   lcoList <- list()
   nfits <- 0
   if(nthresh<sumweight) for(s in 1:length(initFunctions)){
-    lco <- try(blc(xdat,w=initFunctions[[s]](xdat),weight=weight,verbose=(verbose>1)))
+    lco <- try(blc(xdat,w=initFunctions[[s]](xdat),weights=weight,verbose=(verbose>1)),silent=TRUE)
     if(!inherits(lco,"try-error")){
        nfits <- nfits+1
       lcoList[[nfits]] <- lco
@@ -859,7 +859,6 @@ betaObjf <- function(logab,ydata,wdata,weights){
 ########################################################################################
 
 betaEst <- function(y,w,weights){
-  currErrState <- options()$show.error.messages
 
   yobs = !is.na(y)
   if(sum(yobs)<=1) return(c(1,1))
@@ -874,9 +873,7 @@ betaEst <- function(y,w,weights){
 
   if(sum(yobs)==2) return(exp(logab))
 
-  options(show.error.messages=FALSE)
-  opt <- try(optim(logab, betaObjf, ydata=y, wdata=w, weights=weights, method="BFGS"))
-  options(show.error.messages=currErrState)
+  opt <- try(optim(logab, betaObjf, ydata=y, wdata=w, weights=weights, method="BFGS"),silent=TRUE)
 
   if(inherits(opt,"try-error")) return(c(1,1))
   exp(opt$par)

@@ -5,7 +5,10 @@
 Performs Gaussian latent class modeling using recursively-partitioned mixture model
 }
 \usage{
-glcTree(x, initFunctions = list(glcInitializeSplitFanny(nu=1.5)), weight = NULL, index = NULL, wthresh = 1e-08, nodename = "root", maxlevel = Inf, verbose = 2, nthresh = 5, level = 0, env = NULL, unsplit = NULL, splitCriterion = glcSplitCriterionBIC)
+glcTree(x, initFunctions = list(glcInitializeSplitFanny(nu=1.5)), 
+   weight = NULL, index = NULL, wthresh = 1e-08, 
+   nodename = "root", maxlevel = Inf, verbose = 2, nthresh = 5, level = 0, 
+   env = NULL, unsplit = NULL, splitCriterion = glcSplitCriterionBIC)
 }
 \arguments{
   \item{x}{Data matrix (n x j) on which to perform clustering.  Missing values are supported.}

@@ -124,6 +124,8 @@ print.glcTree <- function(x,...){
 #    Plot method for objects of type glcTree
 #       Plots profiles of terminal nodes in color.
 #
+# MODIFIED 12-Sep-2014 to address changes in specification of graphical parameters to 'rect' function
+#
 # ARGUMENTS:
 #    env:       Object to print
 #    method:    "weight" or "binary"
@@ -138,84 +140,78 @@ print.glcTree <- function(x,...){
 ########################################################################################
 plot.glcTree <- function(x, ...) plotImage.glcTree(x, ...)
 
-plotImage.glcTree <- function(env, start="r", method="weight",
-  palette=colorRampPalette(c("yellow","black","blue"),space="Lab")(128),
-  divcol="red",
-  xorder=NULL,
-  dimensions=NULL,
-  labelType="LR", muColorEps=1E-8){
-
-  start2 <- ifelse(start=="r","root",start)
-
-  xdat <- env[[start2]]$x
-  if(is.null(dimensions)) dimensions <- 1:(dim(xdat)[2])
-  if(is.null(xorder)) xorder <- hclust(dist(t(xdat[,dimensions])),method="average")$order
-
-  nodes <- setdiff(objects(env),"root")
-  levs <- max(sapply(nodes,nchar))-nchar(start)
-  offset <- nchar(start)
-  
-  K <- length(dimensions)
-
-  if(method=="binary") {
-    QQ <- levs-offset+1
-    QQ2 <- 2^QQ
-    image(0:QQ2,0:K,matrix(0,QQ2,K),xlab="",ylab="",xaxt="n",yaxt="n",col="white")
-
-    placement <- function(s,tree){
-      Q <- levs
-      y <- strsplit(gsub("R","1",gsub("L","0",s)),"")[[1]][-(1:offset)]
-      if(length(y)<Q) y <- c(y,rep("0",Q-length(y)))
-      sum(as.numeric(y)*2^(levs:1-1))
+plotImage.glcTree <- function (env, start = "r", method = "weight", palette = colorRampPalette(c("yellow", 
+    "black", "blue"), space = "Lab")(128), divcol = "red", xorder = NULL, 
+    dimensions = NULL, labelType = "LR", muColorEps = 1e-08) {
+    
+    start2 <- ifelse(start == "r", "root", start)
+    xdat <- env[[start2]]$x
+    if (is.null(dimensions)) 
+        dimensions <- 1:(dim(xdat)[2])
+    if (is.null(xorder)) 
+        xorder <- hclust(dist(t(xdat[, dimensions])), method = "average")$order
+    nodes <- setdiff(objects(env), "root")
+    levs <- max(sapply(nodes, nchar)) - nchar(start)
+    offset <- nchar(start)
+    K <- length(dimensions)
+    if (method == "binary") {
+        QQ <- levs - offset + 1
+        QQ2 <- 2^QQ
+        image(0:QQ2, 0:K, matrix(0, QQ2, K), xlab = "", ylab = "", 
+            xaxt = "n", yaxt = "n", col = "white")
+        placement <- function(s, tree) {
+            Q <- levs
+            y <- strsplit(gsub("R", "1", gsub("L", "0", s)), 
+                "")[[1]][-(1:offset)]
+            if (length(y) < Q) 
+                y <- c(y, rep("0", Q - length(y)))
+            sum(as.numeric(y) * 2^(levs:1 - 1))
+        }
+        places <- c(unlist(glcTreeApply(env, placement, asObject = FALSE, 
+            terminalOnly = TRUE)), QQ2)
+        nmplaces <- names(places)
     }
-
-    places <- c(unlist(glcTreeApply(env,placement,asObject=FALSE,terminalOnly=TRUE)),QQ2)
-    nmplaces <- names(places) 
-  }
-
-  else if(method=="weight") {
-
-    placement <- function(s,tree){
-      sum(s$weight)
+    else if (method == "weight") {
+        placement <- function(s, tree) {
+            sum(s$weight)
+        }
+        places <- c(0, unlist(glcTreeApply(env, placement, terminalOnly = TRUE)))
+        QQ2 <- round(sum(places), 0)
+        places <- cumsum(places)
+        nmplaces <- names(places)[-1]
+        image(0:QQ2, 0:K, matrix(0, QQ2, K), xlab = "", ylab = "", 
+            xaxt = "n", yaxt = "n", col = "white")
+        print(places)
     }
-
-    places <- c(0, unlist(glcTreeApply(env,placement,terminalOnly=TRUE)))
-    QQ2 <- round(sum(places),0)
-
-    places <- cumsum(places)
-    nmplaces <- names(places)[-1] 
-    image(0:QQ2,0:K,matrix(0,QQ2,K),xlab="",ylab="",xaxt="n",yaxt="n",col="white")
-    print(places)  
-  }
-
-  ncol <- length(palette)
-  nplaces <- length(places)-1
-  lpos <- rep(NA,nplaces)
-  for(i in 1:nplaces){
-    x0 <- places[i]
-    x1 <- places[i+1]
-    muo <- env[[nmplaces[i]]]$unsplit
-    mu <- muo$mu[dimensions][xorder]
-    muMin <- min(mu)
-    muColor <- (mu-muMin+muColorEps)/(max(mu)-muMin+muColorEps)
- 
-    for(k in 1:K){
-      rect(x0,k-1,x1,k,border=-1,density=-1,col=palette[ceiling(muColor[k]*ncol)])
-      lpos[i] <- (x0+x1)/2
+    ncol <- length(palette)
+    nplaces <- length(places) - 1
+    lpos <- rep(NA, nplaces)
+    for (i in 1:nplaces) {
+        x0 <- places[i]
+        x1 <- places[i + 1]
+        muo <- env[[nmplaces[i]]]$unsplit
+        mu <- muo$mu[dimensions][xorder]
+        muMin <- min(mu)
+        muColor <- (mu - muMin + muColorEps)/(max(mu) - muMin + 
+            muColorEps)
+        for (k in 1:K) {
+            rect(x0, k - 1, x1, k, border = NA, density = NA, 
+                col = palette[ceiling(muColor[k] * ncol)])
+            lpos[i] <- (x0 + x1)/2
+        }
+        abline(v = x1, col = divcol, lwd = 2)
     }
-    abline(v=x1,col=divcol,lwd=2)
-  }
-  if(labelType=="LR") labs <- gsub("^r","",nmplaces[1:nplaces])
-  else {
-    labs <- gsub("^r","",nmplaces[1:nplaces])
-    labs <- gsub("L","0",labs)
-    labs <- gsub("R","1",labs)
-  }
-
-  axis(1,lpos,labs,las=2)
-
-  invisible(xorder)
+    if (labelType == "LR") 
+        labs <- gsub("^r", "", nmplaces[1:nplaces])
+    else {
+        labs <- gsub("^r", "", nmplaces[1:nplaces])
+        labs <- gsub("L", "0", labs)
+        labs <- gsub("R", "1", labs)
+    }
+    axis(1, lpos, labs, las = 2)
+    invisible(xorder)
 }
+
 
 ########################################################################################
 # FUNCTION:  plotTree.glcTree

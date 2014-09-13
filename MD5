@@ -1,7 +1,7 @@
-6873da494a462849d16423648226438b *DESCRIPTION
+974579311b0e5621138a02800368a102 *DESCRIPTION
 8179a6d33112b1b553bc9dd52f7c6d4f *NAMESPACE
-86e8c98f39a135c8d77a064304506c00 *R/betaRPMM.R
-eda2c91ab917899140085a4e45312a58 *R/gaussRPMM.R
+a12789e73a9adf2117c06cd087c99a43 *R/betaRPMM.R
+9256ac83f4c257a5cdab880600db8e04 *R/gaussRPMM.R
 0f482c38da5c67769b6955a3675f078b *R/rpmmPredict.R
 9aa0c1d8086c5e3b54f6a6d91945c12d *data/IlluminaMethylation.RData
 f4afef50897a613db2e309e98dd52c16 *man/IlluminaMethylation.Rd
@@ -38,7 +38,7 @@ f71a40df4dccadb08d978ff38a9c1bff *man/glcSplit.Rd
 51a19e91f79d8c097946c310d0c7f349 *man/glcSplitCriterionLRT.Rd
 ff81c180e782e190f9f1bc50e314b253 *man/glcSplitCriterionLevelWtdBIC.Rd
 7e4c713181d29ea4832b8b36e5c52238 *man/glcSubTree.Rd
-4baaf125bec7218109bdc5796d374874 *man/glcTree.Rd
+8fc7728fdb4d679042f94830bf2cf6a7 *man/glcTree.Rd
 940bcaf6d20f417e88eeb1d3fd18c681 *man/glcTreeApply.Rd
 0f465478963663def3b2df9fd79978ec *man/glcTreeLeafClasses.Rd
 0094d60bb15c9d6348f52d4d45d2218c *man/glcTreeLeafMatrix.Rd

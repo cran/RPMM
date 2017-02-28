@@ -8,3 +8,19 @@ exportPattern(".")
 import(
   cluster
 )
+
+  importFrom("grDevices", "colorRampPalette")
+  importFrom("graphics", "abline", "axis", "image", "lines", "plot",
+             "points", "rect", "text")
+  importFrom("stats", "cutree", "dbeta", "dist", "dnorm", "glm",
+             "hclust", "optim", "pchisq", "quantile", "quasibinomial",
+             "runif", "sd", "var")
+
+S3method(print, blcTree)
+S3method(predict, blcTree)
+S3method(plot, blcTree)
+
+S3method(print, glcTree)
+S3method(predict, glcTree)
+S3method(plot, glcTree)
+
